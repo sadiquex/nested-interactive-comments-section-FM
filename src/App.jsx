@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from "./../data.json";
 import Input from "./components/Input";
 import EachComment from "./components/EachComment";
 
 function App() {
-  // dummy comments
-  const [comments, setComments] = useState(data.comments);
+  const { username } = data.currentUser;
+
+  // persist data
+  const [comments, setComments] = useState(() => {
+    const localData = localStorage.getItem("comments");
+    return localData ? JSON.parse(localData) : data.comments;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("comments", JSON.stringify(comments));
+  }, [comments]);
 
   // function to add user input to top level comments
   const addComment = (userInput) => {

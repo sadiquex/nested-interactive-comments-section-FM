@@ -6,14 +6,14 @@ export default function Input({ addComment }) {
 
   return (
     <Card>
-      <div className="flex gap-4">
-        <input
-          type="text"
+      <div className="flex items-center justify-center gap-4">
+        <textarea
           placeholder="Add a comment..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="outline outline-2  outline-offset-2"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         />
+
         <button
           onClick={() => {
             addComment(input);

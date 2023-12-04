@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Input from "./Input";
 import Card from "./Card";
 import { ReplyIcon } from "./Icons";
 
-const EachComment = ({ comment }) => {
+const EachComment = ({ comment, username }) => {
   const [isReplying, setIsReplying] = useState(false);
+
+  // Create a unique key for each comment
+  const localStorageKey = `replies_${comment.id}`;
+
   // create a comment state for each independent comment item
-  const [replies, setReplies] = useState(comment.replies || []);
+  const [replies, setReplies] = useState(() => {
+    const localReplies = localStorage.getItem(localStorageKey);
+    return localReplies ? JSON.parse(localReplies) : comment.replies || [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(replies));
+  }, [localStorageKey, replies]);
 
   const addReply = (userInput) => {
     if (userInput.trim() !== "") {
@@ -29,7 +40,6 @@ const EachComment = ({ comment }) => {
       };
 
       setReplies((prev) => [newReply, ...(prev || [])]);
-      setIsReplying(!isReplying);
     }
   };
 
@@ -43,7 +53,9 @@ const EachComment = ({ comment }) => {
             <span className="w-[40px] h-[40px]">
               <img src={comment.user.image.png} className="object-cover" />
             </span>
-            <p className="font-bold text-DarkBlue">{comment.username}</p>
+            <p className="font-bold text-DarkBlue">
+              {!username ? "anonymous" : comment.username}
+            </p>
             <p className="text-GrayishBlue">{comment.createdAt}</p>
           </div>
           {/* right */}
