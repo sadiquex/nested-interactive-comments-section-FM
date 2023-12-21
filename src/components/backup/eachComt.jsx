@@ -1,29 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import Input from "./Input";
 import Card from "./Card";
 import { ReplyIcon } from "./Icons";
-import { useReply, useReplyInput } from "./hooks/useReply";
-import { useLocalStorage } from "./hooks/useLocalStorage";
+import { getDateFunction } from "./utils";
 
-const EachComment = ({
-  comment,
-  currentUserId,
-  deleteComment,
-  replyTargetId,
-}) => {
+const EachComment = ({ comment, currentUserId, deleteComment }) => {
+  // console.log(currentUserId);
+
+  // delete and edit functionalities depending on the userID
   const canReply = Boolean(currentUserId);
+  // compare the userID to the currentUserId to see if we can edit or not
   const canEdit = comment.id === currentUserId;
   const canDelete = comment.id === currentUserId;
 
+  // state to open reply input field
+  const [isReplying, setIsReplying] = useState(false);
+
+  // Create a unique key for each comment
   const localStorageKey = `reply_${comment.id}`;
 
-  // using custom hooks
-  const { replies, addReply, deleteReply } = useReply(
-    comment.replies,
-    localStorageKey
-  );
-  const { isReplying, toggleReplying } = useReplyInput();
-  const { value, setStorageValue } = useLocalStorage();
+  // create a comment state for each independent comment item
+  const [replies, setReplies] = useState(() => {
+    const localReplies = localStorage.getItem(localStorageKey);
+    return localReplies ? JSON.parse(localReplies) : comment.replies || [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(replies));
+  }, [localStorageKey, replies]);
+
+  const addReply = (userInput) => {
+    if (userInput.trim() !== "") {
+      const newReply = {
+        id: Math.ceil(Math.random() * 1000),
+        content: userInput,
+        // createdAt: `at ${hours} : ${minutes} GMT`,
+        createdAt: getDateFunction(),
+        replies: [],
+        username: "anonymous",
+        user: {
+          image: {
+            png: "",
+          },
+        },
+      };
+
+      setReplies((prev) => [newReply, ...(prev || [])]);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 pl-6">
@@ -50,7 +75,7 @@ const EachComment = ({
             <div className="md:hidden">rating</div>
 
             {/* right */}
-            <button onClick={toggleReplying}>
+            <button onClick={() => setIsReplying(!isReplying)}>
               <div className="text-moderateBlue font-medium flex gap-2 items-center">
                 {!isReplying ? (
                   <>
@@ -65,28 +90,25 @@ const EachComment = ({
           </div>
           {/* optional buttons */}
           {canEdit && <button>edit</button>}
-          <button onClick={() => deleteComment(comment.id)}>delete</button>
-          {/* {canDelete && (
-          )} */}
+          {canDelete && (
+            <button onClick={() => deleteComment(comment.id)}>delete</button>
+          )}
         </div>
 
         {/* text */}
         <p className="w-[80%] sm:hidden md:block text-GrayishBlue">
           {comment.content}
         </p>
-        {isReplying && (
-          <Input addReply={addReply} replyTargetId={replyTargetId} />
-        )}
+        {isReplying && <Input addComment={addReply} />}
       </Card>
 
-      {/* Iterate through each comment's replies */}
+      {/* iterate through each comment's replies */}
       {replies?.map((reply) => (
         <EachComment
           comment={reply}
           key={reply.id}
           currentUserId={currentUserId}
-          deleteComment={deleteComment}
-          replyTargetId={reply.id}
+          // deleteComment={deleteComment}
         />
       ))}
     </div>

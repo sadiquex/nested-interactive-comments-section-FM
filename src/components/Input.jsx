@@ -1,8 +1,23 @@
 import { useState } from "react";
 import Card from "./Card";
 
-export default function Input({ addComment }) {
+export default function Input({ addComment, addReply, replyTargetId }) {
   const [input, setInput] = useState("");
+  const textAreaDisabled = input.length === 0;
+
+  const handleSend = () => {
+    if (replyTargetId) {
+      // If there's a replyTargetId, add a reply
+      addReply(replyTargetId, input);
+      console.log(input);
+    } else {
+      // If no replyTargetId, add a top-level comment
+      addComment(input);
+      console.log(input);
+    }
+
+    setInput("");
+  };
 
   return (
     <Card>
@@ -15,11 +30,10 @@ export default function Input({ addComment }) {
         />
 
         <button
-          onClick={() => {
-            addComment(input);
-            setInput("");
-          }}
-          className="bg-moderateBlue px-4 py-2 rounded-lg text-White font-medium"
+          type="button"
+          disabled={textAreaDisabled}
+          onClick={handleSend}
+          className="bg-moderateBlue px-4 py-2 rounded-lg text-White font-medium disabled:bg-LightGray disabled:text-GrayishBlue"
         >
           SEND
         </button>

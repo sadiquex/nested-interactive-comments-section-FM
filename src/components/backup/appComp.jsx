@@ -7,7 +7,10 @@ function App() {
   const { username } = data.currentUser;
 
   // persist data to LS
-  const [comments, setComments] = useState(data.comments);
+  const [comments, setComments] = useState(() => {
+    const localData = localStorage.getItem("comments");
+    return localData ? JSON.parse(localData) : data.comments;
+  });
 
   useEffect(() => {
     localStorage.setItem("comments", JSON.stringify(comments));
@@ -33,7 +36,6 @@ function App() {
         },
       };
 
-      // add to comments' array
       setComments((prev) => [newComment, ...prev]);
     }
   };
