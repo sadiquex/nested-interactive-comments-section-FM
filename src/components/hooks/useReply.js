@@ -4,6 +4,7 @@ import { getDateFunction } from "../utils";
 // Custom hook for handling replies
 export const useReply = (initialReplies, localStorageKey) => {
   const [replies, setReplies] = useState([]);
+  const [replyTargetId, setReplyTargetId] = useState(null);
 
   useEffect(() => {
     localStorage.setItem(localStorageKey, JSON.stringify(replies));
@@ -23,6 +24,8 @@ export const useReply = (initialReplies, localStorageKey) => {
           },
         },
       };
+
+      setReplyTargetId(replyId);
 
       setReplies((prev) => [newReply, ...(prev || [])]);
     }

@@ -1,16 +1,29 @@
-import { useState } from "react";
+// import { useState, useEffect } from "react";
 
-// custom hook for managing local storage
-export const useLocalStorage = (key, initialValue) => {
-  const [value, setValue] = useState(() => {
-    const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : initialValue;
-  });
+// export const useLocalStorage = (initialComments, localStorageKey) => {
+//   const [comments, setComments] = useState(() => {
+//     const storedComments = localStorage.getItem(localStorageKey);
+//     return storedComments ? JSON.parse(storedComments) : initialComments;
+//   });
 
-  const setStoredValue = (newValue) => {
-    setValue(newValue);
-    localStorage.setItem(key, JSON.stringify(newValue));
-  };
+//   useEffect(() => {
+//     localStorage.setItem(localStorageKey, JSON.stringify(comments));
+//   }, [comments, localStorageKey]);
 
-  return { value, setStoredValue };
+//   const addComment = (newComment) => {
+//     setComments((prevComments) => [newComment, ...prevComments]);
+//   };
+
+//   const deleteComment = (commentId) => {
+//     const updatedComments = comments.filter(
+//       (comment) => comment.id !== commentId
+//     );
+//     setComments(updatedComments);
+//   };
+
+//   return { comments, addComment, deleteComment };
+// };
+
+export const useLocalStorage = () => {
+  return {};
 };

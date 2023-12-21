@@ -9,11 +9,10 @@ export default function Input({ addComment, addReply, replyTargetId }) {
     if (replyTargetId) {
       // If there's a replyTargetId, add a reply
       addReply(replyTargetId, input);
-      console.log(input);
+      // console.log("reply side" + input);
     } else {
       // If no replyTargetId, add a top-level comment
       addComment(input);
-      console.log(input);
     }
 
     setInput("");
@@ -21,7 +20,7 @@ export default function Input({ addComment, addReply, replyTargetId }) {
 
   return (
     <Card>
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4 md:w-[400px]">
         <textarea
           placeholder="Add a comment..."
           value={input}
